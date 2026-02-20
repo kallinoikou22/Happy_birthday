@@ -41,7 +41,7 @@
         linear-gradient(180deg, var(--bg3) 0%, var(--bg1) 45%, var(--bg2) 100%);
     }
 
-    .wrap{ width:min(980px, 100%); display:grid; gap:14px; }
+    .wrap{ width:min(1020px, 100%); display:grid; gap:14px; }
 
     .stage{
       position:relative;
@@ -56,7 +56,7 @@
       position:absolute;
       inset:0;
       pointer-events:none;
-      z-index: 5;
+      z-index: 10;
     }
 
     .content{ position:relative; padding: 18px; z-index: 2; }
@@ -64,7 +64,7 @@
     .topRow{
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      justify-content:flex-start;
       gap:10px;
       flex-wrap:wrap;
       margin-bottom: 10px;
@@ -85,9 +85,10 @@
       margin:0;
     }
 
+    /* Layout fix: keep a nicer “card” height, avoid awkward tall columns */
     .grid{
       display:grid;
-      grid-template-columns: 1.1fr .9fr;
+      grid-template-columns: 1.05fr .95fr;
       gap: 14px;
       align-items:start;
     }
@@ -103,11 +104,22 @@
       overflow:hidden;
     }
 
-    .heroImg{
+    /* Panda frame: fixed-ish height so it doesn't blow up the page */
+    .heroFrame{
       width:100%;
-      display:block;
-      height:auto;
+      height: min(58vh, 560px);
       background: rgba(0,0,0,.03);
+      position:relative;
+      overflow:hidden;
+    }
+    @media (max-width: 860px){
+      .heroFrame{ height: min(46vh, 520px); }
+    }
+    .heroFrame img{
+      width:100%;
+      height:100%;
+      object-fit: cover;
+      display:block;
     }
 
     .inner{ padding: 14px; display:grid; gap:12px; }
@@ -123,6 +135,10 @@
       background: linear-gradient(90deg, var(--accent), #ff7aa0);
       box-shadow: 0 14px 32px rgba(255,77,125,.28);
       transition: transform .15s ease, filter .15s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
     }
     .btn:active{ transform: translateY(1px) scale(.99); }
 
@@ -161,36 +177,97 @@
       box-shadow: 0 14px 28px rgba(0,0,0,.08);
     }
     .stepImageBox.show{ display:block; animation: pop .5s cubic-bezier(.2,.9,.2,1); }
-
     @keyframes pop{
       0%{ transform: translateY(10px) scale(.98); opacity:0; }
       100%{ transform: translateY(0) scale(1); opacity:1; }
     }
+    .stepImageBox img{ width:100%; height:auto; display:block; }
 
-    .stepImageBox img{
-      width:100%;
-      height:auto;
-      display:block;
+    /* Micro effects layer near step images */
+    .fxLayer{
+      position:relative;
+      border-radius: 16px;
+      overflow:hidden;
     }
+    .petal, .spark, .popper{
+      position:absolute;
+      pointer-events:none;
+      opacity:0;
+    }
+
+    /* Gift opening mini scene */
+    .giftWrap{
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 10px 0 2px 0;
+    }
+    .giftWrap.show{ display:flex; }
+    .gift{
+      width: 86px;
+      height: 70px;
+      position:relative;
+      transform: translateY(6px) scale(.98);
+      opacity:0;
+      animation: giftIn .55s ease forwards;
+    }
+    @keyframes giftIn{
+      to{ opacity:1; transform: translateY(0) scale(1); }
+    }
+    .gift .box{
+      position:absolute; left:0; right:0; bottom:0;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(255,77,125,.85);
+      border: 1px solid rgba(0,0,0,.10);
+      box-shadow: 0 14px 26px rgba(0,0,0,.10);
+    }
+    .gift .ribbonV{
+      position:absolute; left:50%; bottom:0;
+      width: 10px; height: 46px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.86);
+      border-radius: 8px;
+    }
+    .gift .ribbonH{
+      position:absolute; left:0; right:0; bottom: 18px;
+      height: 10px;
+      background: rgba(255,255,255,.86);
+      border-radius: 8px;
+    }
+    .gift .lid{
+      position:absolute; left:-2px; right:-2px; bottom: 36px;
+      height: 22px;
+      border-radius: 12px;
+      background: rgba(57,198,165,.85);
+      border: 1px solid rgba(0,0,0,.10);
+      transform-origin: 10% 90%;
+      animation: lidOpen .75s .15s cubic-bezier(.2,.9,.2,1) forwards;
+    }
+    @keyframes lidOpen{
+      0%{ transform: rotate(0deg) translateY(0); }
+      100%{ transform: rotate(-18deg) translateY(-6px); }
+    }
+    .gift .bowL, .gift .bowR{
+      position:absolute; bottom: 54px; width: 18px; height: 12px;
+      background: rgba(255,255,255,.88);
+      border-radius: 12px 12px 12px 12px;
+      opacity:.95;
+    }
+    .gift .bowL{ left: 34px; transform: rotate(-18deg); }
+    .gift .bowR{ right: 34px; transform: rotate(18deg); }
 
     /* Final reveal */
     .reveal{
       display:none;
+      margin-top: 6px;
       border-radius: 18px;
       border: 1px solid var(--stroke);
       background: rgba(255,255,255,.86);
       overflow:hidden;
       box-shadow: 0 18px 46px rgba(0,0,0,.10);
     }
-    .reveal.show{
-      display:block;
-      animation: revealIn .65s ease;
-      position:relative;
-    }
-    @keyframes revealIn{
-      from{ opacity:0; transform: translateY(14px) scale(.99); }
-      to{ opacity:1; transform: translateY(0) scale(1); }
-    }
+    .reveal.show{ display:block; }
 
     .banner{
       padding: 14px 14px 12px 14px;
@@ -202,25 +279,39 @@
       border-bottom: 1px solid var(--stroke);
       text-align:center;
       position:relative;
+      overflow:hidden;
     }
-
     .banner h2{
       margin: 0;
       font-size: clamp(16px, 2.4vw, 22px);
       font-weight: 900;
       letter-spacing: -.02em;
+      transform: translateY(6px);
+      opacity:0;
     }
-
-    .sparkle{
+    .banner.show h2{
+      animation: bannerIn .55s ease forwards;
+    }
+    @keyframes bannerIn{
+      to{ transform: translateY(0); opacity:1; }
+    }
+    .sweep{
       position:absolute;
-      inset:-20px;
-      background:
-        radial-gradient(circle at 10% 30%, rgba(255,181,71,.35), transparent 35%),
-        radial-gradient(circle at 85% 20%, rgba(255,77,125,.28), transparent 40%),
-        radial-gradient(circle at 65% 80%, rgba(57,198,165,.28), transparent 45%);
-      filter: blur(10px);
-      opacity:.9;
+      inset:-60px;
+      background: linear-gradient(115deg,
+        rgba(255,255,255,0) 20%,
+        rgba(255,255,255,.55) 40%,
+        rgba(255,255,255,0) 60%);
+      transform: translateX(-60%);
+      opacity:0;
       pointer-events:none;
+    }
+    .banner.show .sweep{
+      opacity:1;
+      animation: sweep 1s ease forwards;
+    }
+    @keyframes sweep{
+      to{ transform: translateX(60%); }
     }
 
     .photoWrap{
@@ -236,6 +327,14 @@
       position:relative;
       box-shadow: 0 18px 50px rgba(0,0,0,.14);
       transform: translateZ(0);
+      opacity:0;
+      transform: translateY(10px) scale(.99);
+    }
+    .photoFrame.show{
+      animation: photoIn .6s ease forwards;
+    }
+    @keyframes photoIn{
+      to{ opacity:1; transform: translateY(0) scale(1); }
     }
     .photoFrame img{
       width:100%;
@@ -244,10 +343,10 @@
       object-fit: cover;
     }
 
-    /* “Fantasmagoriko” glow only (no overlay images) */
+    /* Glow behind the photo (not on top) */
     .glowRing{
       position:absolute;
-      inset:-10px;
+      inset: 4px;
       border-radius: 22px;
       background:
         conic-gradient(from 0deg,
@@ -257,14 +356,37 @@
           rgba(255,181,71,.35),
           rgba(255,77,125,.35),
           rgba(255,77,125,.0));
-      filter: blur(14px);
+      filter: blur(16px);
       opacity: .9;
       animation: spin 2.8s linear infinite;
       pointer-events:none;
       z-index: 0;
     }
-    @keyframes spin{
-      to{ transform: rotate(360deg); }
+    @keyframes spin{ to{ transform: rotate(360deg); } }
+
+    /* Balloons (emoji) flying up during reveal, placed around—not over—photo */
+    .balloonLayer{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index: 9;
+      overflow:hidden;
+    }
+    .balloon{
+      position:absolute;
+      bottom: -60px;
+      font-size: 34px;
+      opacity: 0;
+      transform: translateY(0);
+      filter: drop-shadow(0 12px 18px rgba(0,0,0,.12));
+    }
+    .balloon.fly{
+      opacity: 1;
+      animation: flyUp var(--dur) linear forwards;
+    }
+    @keyframes flyUp{
+      from{ transform: translateY(0); }
+      to{ transform: translateY(-120vh); }
     }
 
     .note{
@@ -279,7 +401,7 @@
 
 <body>
   <div class="wrap">
-    <div class="stage">
+    <div class="stage" id="stage">
       <canvas id="confetti"></canvas>
 
       <div class="content">
@@ -288,19 +410,30 @@
         </div>
 
         <div class="grid">
+          <!-- Left: panda (fixed frame height for better layout) -->
           <div class="box">
-            <img class="heroImg" src="panda.png" alt="Birthday panda card"
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-            <div class="inner" style="display:none;">
-              <p class="wishText" style="color:var(--muted);">
-                Δεν βρέθηκε το <strong>panda.png</strong>. Βάλε την αρχική εικόνα στο ίδιο folder και ονόμασέ την <strong>panda.png</strong>.
-              </p>
+            <div class="heroFrame">
+              <img src="panda.png" alt="Birthday panda card"
+                   onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>panda.png</b>.</div>');" />
             </div>
           </div>
 
+          <!-- Right: wishes + steps + reveal -->
           <div class="box">
             <div class="inner">
               <button class="btn" id="mainBtn" type="button">Press για γενεθλιακές ευχές</button>
+
+              <!-- Gift opening mini animation (first click only) -->
+              <div class="giftWrap" id="giftWrap" aria-hidden="true">
+                <div class="gift">
+                  <div class="lid"></div>
+                  <div class="bowL"></div>
+                  <div class="bowR"></div>
+                  <div class="box"></div>
+                  <div class="ribbonV"></div>
+                  <div class="ribbonH"></div>
+                </div>
+              </div>
 
               <div class="progressWrap" id="progressWrap">
                 <div class="bar" aria-label="progress"><div id="barFill"></div></div>
@@ -308,38 +441,43 @@
 
               <p class="wishText" id="wishText"></p>
 
-              <div class="stepImageBox" id="imgStep1">
+              <!-- Step images -->
+              <div class="stepImageBox fxLayer" id="imgStep1">
                 <img src="pizza.png" alt="Pizza με κεράκια"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
-              <div class="stepImageBox" id="imgStep2">
+              <div class="stepImageBox fxLayer" id="imgStep2">
                 <img src="flowers.png" alt="Ανθοδέσμη"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
-              <div class="stepImageBox" id="imgStep3">
+              <div class="stepImageBox fxLayer" id="imgStep3">
                 <img src="corgi.png" alt="Corgi"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
+              <!-- Final reveal -->
               <div class="reveal" id="reveal">
-                <div class="banner">
-                  <div class="sparkle"></div>
+                <div class="banner" id="banner">
+                  <div class="sweep" aria-hidden="true"></div>
                   <h2>Σ' αγαπάω πολύ φίλη μου❤️</h2>
                 </div>
 
-                <div class="photoWrap">
+                <div class="photoWrap" id="photoWrap">
                   <div class="glowRing" aria-hidden="true"></div>
 
-                  <div class="photoFrame">
+                  <div class="balloonLayer" id="balloonLayer" aria-hidden="true"></div>
+
+                  <div class="photoFrame" id="photoFrame">
                     <img src="us.jpg" alt="Η φωτογραφία μας"
-                         onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>us.jpg</b>. Βάλε τη φωτογραφία σας στο ίδιο folder και ονόμασέ τη <b>us.jpg</b>.</div>');" />
+                         onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>us.jpg</b>.</div>');" />
                   </div>
                 </div>
 
                 <p class="note">Αλλάζεις μόνο τις 3 ευχές στο JavaScript, και τα αρχεία εικόνων (panda.png, pizza.png, flowers.png, corgi.png, us.jpg).</p>
               </div>
+
             </div>
           </div>
         </div>
@@ -358,7 +496,11 @@
       ];
       // ============================================
 
+      const stage = document.getElementById('stage');
       const mainBtn = document.getElementById('mainBtn');
+
+      const giftWrap = document.getElementById('giftWrap');
+
       const progressWrap = document.getElementById('progressWrap');
       const barFill = document.getElementById('barFill');
 
@@ -369,7 +511,12 @@
       const img2 = document.getElementById('imgStep2');
       const img3 = document.getElementById('imgStep3');
 
-      let step = 0; // 0..3 (3 = ready to reveal)
+      const banner = document.getElementById('banner');
+      const photoFrame = document.getElementById('photoFrame');
+      const balloonLayer = document.getElementById('balloonLayer');
+
+      let step = 0;          // 0..3
+      let openedGift = false;
 
       function hideStepImages(){
         img1.classList.remove('show');
@@ -382,6 +529,84 @@
         barFill.style.width = pct + "%";
       }
 
+      function sparkleBox(el){
+        // quick sparkles around the box
+        const rect = el.getBoundingClientRect();
+        for(let i=0;i<10;i++){
+          const s = document.createElement('div');
+          s.className = 'spark';
+          s.style.left = (6 + Math.random()*(rect.width-12)) + 'px';
+          s.style.top = (6 + Math.random()*(rect.height-12)) + 'px';
+          s.style.width = (6 + Math.random()*8) + 'px';
+          s.style.height = s.style.width;
+          s.style.borderRadius = '999px';
+          s.style.background = 'rgba(255,255,255,0.9)';
+          s.style.boxShadow = '0 0 0 2px rgba(255,181,71,.35), 0 0 18px rgba(255,181,71,.35)';
+          s.style.opacity = '0';
+          s.style.transform = 'scale(0.6)';
+          s.style.transition = 'opacity .25s ease, transform .25s ease';
+          el.appendChild(s);
+
+          requestAnimationFrame(() => {
+            s.style.opacity = '1';
+            s.style.transform = 'scale(1)';
+          });
+
+          setTimeout(() => {
+            s.style.opacity = '0';
+            s.style.transform = 'scale(0.6)';
+            setTimeout(() => s.remove(), 250);
+          }, 260 + Math.random()*200);
+        }
+      }
+
+      function petals(el){
+        // small “petals” falling inside the box for a moment
+        const rect = el.getBoundingClientRect();
+        for(let i=0;i<14;i++){
+          const p = document.createElement('div');
+          p.className = 'petal';
+          p.style.left = (10 + Math.random()*(rect.width-20)) + 'px';
+          p.style.top = (-10 - Math.random()*40) + 'px';
+          p.style.width = (6 + Math.random()*8) + 'px';
+          p.style.height = (10 + Math.random()*10) + 'px';
+          p.style.borderRadius = '999px';
+          p.style.background = (Math.random() < 0.5) ? 'rgba(255,77,125,.55)' : 'rgba(255,181,71,.45)';
+          p.style.opacity = '0.95';
+          p.style.transform = 'rotate(' + ((Math.random()*40)-20) + 'deg)';
+          p.style.transition = 'transform 1.1s ease, top 1.1s ease, opacity 1.1s ease';
+          el.appendChild(p);
+
+          requestAnimationFrame(() => {
+            p.style.top = (rect.height + 20) + 'px';
+            p.style.transform = 'rotate(' + ((Math.random()*120)-60) + 'deg)';
+            p.style.opacity = '0.0';
+          });
+
+          setTimeout(() => p.remove(), 1150);
+        }
+      }
+
+      function pop(el){
+        el.animate([
+          { transform: 'translateY(0) scale(1)' },
+          { transform: 'translateY(-6px) scale(1.02)' },
+          { transform: 'translateY(0) scale(1)' }
+        ], { duration: 420, easing: 'cubic-bezier(.2,.9,.2,1)' });
+      }
+
+      async function playGiftOnce(){
+        if(openedGift) return;
+        openedGift = true;
+
+        giftWrap.classList.add('show');
+        burstConfetti(35);
+
+        // wait a bit for the lid animation + effect, then hide
+        await new Promise(r => setTimeout(r, 850));
+        giftWrap.classList.remove('show');
+      }
+
       function showStep(s){
         progressWrap.classList.add('show');
         hideStepImages();
@@ -389,26 +614,85 @@
         wishText.textContent = wishes[s - 1];
         setProgress(s);
 
-        if(s === 1) img1.classList.add('show');
-        if(s === 2) img2.classList.add('show');
-        if(s === 3) img3.classList.add('show');
+        if(s === 1){
+          img1.classList.add('show');
+          burstConfetti(65);
+          sparkleBox(img1);
+        }
+        if(s === 2){
+          img2.classList.add('show');
+          burstConfetti(55);
+          petals(img2);
+        }
+        if(s === 3){
+          img3.classList.add('show');
+          burstConfetti(75);
+          pop(img3);
+        }
+      }
 
-        burstConfetti(70);
+      function smoothScrollToReveal(){
+        // a bit of delay so the reveal has layout
+        setTimeout(() => {
+          reveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 60);
+      }
+
+      function spawnBalloons(){
+        balloonLayer.innerHTML = "";
+
+        // place balloons left/right sides of the photo area, not covering the image
+        const specs = [
+          { left: '6%',  dur: '4.6s', size: 34, emoji:'🎈' },
+          { left: '14%', dur: '5.2s', size: 30, emoji:'🎈' },
+          { left: '86%', dur: '4.9s', size: 34, emoji:'🎈' },
+          { left: '78%', dur: '5.6s', size: 30, emoji:'🎈' },
+          { left: '92%', dur: '5.1s', size: 28, emoji:'🎈' }
+        ];
+
+        for(const sp of specs){
+          const b = document.createElement('div');
+          b.className = 'balloon';
+          b.textContent = sp.emoji;
+          b.style.left = sp.left;
+          b.style.setProperty('--dur', sp.dur);
+          b.style.fontSize = sp.size + 'px';
+          balloonLayer.appendChild(b);
+
+          // stagger start
+          const delay = 120 + Math.random()*420;
+          setTimeout(() => b.classList.add('fly'), delay);
+        }
       }
 
       function doReveal(){
         reveal.classList.add('show');
-        hideStepImages();
+        banner.classList.add('show');
+        smoothScrollToReveal();
 
-        // “Fantasmagoriko” confetti: burst + short shower
-        burstConfetti(260);
-        startConfettiShower(1800);
+        // Stage 1: banner + sweep
+        burstConfetti(110);
+
+        // Stage 2: photo in
+        setTimeout(() => {
+          photoFrame.classList.add('show');
+          burstConfetti(170);
+          startConfettiShower(2200);
+          spawnBalloons();
+        }, 320);
+
+        // clean step visuals
+        hideStepImages();
 
         mainBtn.disabled = true;
         mainBtn.textContent = "🎉";
       }
 
-      mainBtn.addEventListener('click', () => {
+      mainBtn.addEventListener('click', async () => {
+        if(step === 0){
+          await playGiftOnce();
+        }
+
         if(step < 3){
           step++;
           showStep(step);
