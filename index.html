@@ -85,7 +85,6 @@
       margin:0;
     }
 
-    /* Layout fix: keep a nicer “card” height, avoid awkward tall columns */
     .grid{
       display:grid;
       grid-template-columns: 1.05fr .95fr;
@@ -104,22 +103,14 @@
       overflow:hidden;
     }
 
-    /* Panda frame: fixed-ish height so it doesn't blow up the page */
-    .heroFrame{
+    /* Panda: show full image (no crop). Keeps original aspect, fits within a pleasant max height. */
+    .heroImg{
       width:100%;
-      height: min(58vh, 560px);
-      background: rgba(0,0,0,.03);
-      position:relative;
-      overflow:hidden;
-    }
-    @media (max-width: 860px){
-      .heroFrame{ height: min(46vh, 520px); }
-    }
-    .heroFrame img{
-      width:100%;
-      height:100%;
-      object-fit: cover;
+      height:auto;
       display:block;
+      background: rgba(0,0,0,.03);
+      max-height: min(72vh, 720px);
+      object-fit: contain;
     }
 
     .inner{ padding: 14px; display:grid; gap:12px; }
@@ -183,17 +174,8 @@
     }
     .stepImageBox img{ width:100%; height:auto; display:block; }
 
-    /* Micro effects layer near step images */
-    .fxLayer{
-      position:relative;
-      border-radius: 16px;
-      overflow:hidden;
-    }
-    .petal, .spark, .popper{
-      position:absolute;
-      pointer-events:none;
-      opacity:0;
-    }
+    .fxLayer{ position:relative; border-radius: 16px; overflow:hidden; }
+    .petal, .spark{ position:absolute; pointer-events:none; opacity:0; }
 
     /* Gift opening mini scene */
     .giftWrap{
@@ -251,7 +233,7 @@
     .gift .bowL, .gift .bowR{
       position:absolute; bottom: 54px; width: 18px; height: 12px;
       background: rgba(255,255,255,.88);
-      border-radius: 12px 12px 12px 12px;
+      border-radius: 12px;
       opacity:.95;
     }
     .gift .bowL{ left: 34px; transform: rotate(-18deg); }
@@ -343,7 +325,6 @@
       object-fit: cover;
     }
 
-    /* Glow behind the photo (not on top) */
     .glowRing{
       position:absolute;
       inset: 4px;
@@ -364,7 +345,7 @@
     }
     @keyframes spin{ to{ transform: rotate(360deg); } }
 
-    /* Balloons (emoji) flying up during reveal, placed around—not over—photo */
+    /* Balloons */
     .balloonLayer{
       position:absolute;
       inset:0;
@@ -379,14 +360,15 @@
       opacity: 0;
       transform: translateY(0);
       filter: drop-shadow(0 12px 18px rgba(0,0,0,.12));
+      will-change: transform, opacity;
     }
     .balloon.fly{
       opacity: 1;
       animation: flyUp var(--dur) linear forwards;
     }
     @keyframes flyUp{
-      from{ transform: translateY(0); }
-      to{ transform: translateY(-120vh); }
+      from{ transform: translateY(0); opacity:1; }
+      to{ transform: translateY(-120vh); opacity:0; }
     }
 
     .note{
@@ -410,20 +392,15 @@
         </div>
 
         <div class="grid">
-          <!-- Left: panda (fixed frame height for better layout) -->
           <div class="box">
-            <div class="heroFrame">
-              <img src="panda.png" alt="Birthday panda card"
-                   onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>panda.png</b>.</div>');" />
-            </div>
+            <img class="heroImg" src="panda.png" alt="Birthday panda card"
+                 onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>panda.png</b>.</div>');" />
           </div>
 
-          <!-- Right: wishes + steps + reveal -->
           <div class="box">
             <div class="inner">
               <button class="btn" id="mainBtn" type="button">Press για γενεθλιακές ευχές</button>
 
-              <!-- Gift opening mini animation (first click only) -->
               <div class="giftWrap" id="giftWrap" aria-hidden="true">
                 <div class="gift">
                   <div class="lid"></div>
@@ -441,7 +418,6 @@
 
               <p class="wishText" id="wishText"></p>
 
-              <!-- Step images -->
               <div class="stepImageBox fxLayer" id="imgStep1">
                 <img src="pizza.png" alt="Pizza με κεράκια"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
@@ -457,7 +433,6 @@
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
-              <!-- Final reveal -->
               <div class="reveal" id="reveal">
                 <div class="banner" id="banner">
                   <div class="sweep" aria-hidden="true"></div>
@@ -496,7 +471,6 @@
       ];
       // ============================================
 
-      const stage = document.getElementById('stage');
       const mainBtn = document.getElementById('mainBtn');
 
       const giftWrap = document.getElementById('giftWrap');
@@ -530,7 +504,6 @@
       }
 
       function sparkleBox(el){
-        // quick sparkles around the box
         const rect = el.getBoundingClientRect();
         for(let i=0;i<10;i++){
           const s = document.createElement('div');
@@ -561,7 +534,6 @@
       }
 
       function petals(el){
-        // small “petals” falling inside the box for a moment
         const rect = el.getBoundingClientRect();
         for(let i=0;i<14;i++){
           const p = document.createElement('div');
@@ -602,7 +574,6 @@
         giftWrap.classList.add('show');
         burstConfetti(35);
 
-        // wait a bit for the lid animation + effect, then hide
         await new Promise(r => setTimeout(r, 850));
         giftWrap.classList.remove('show');
       }
@@ -632,7 +603,6 @@
       }
 
       function smoothScrollToReveal(){
-        // a bit of delay so the reveal has layout
         setTimeout(() => {
           reveal.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 60);
@@ -641,13 +611,12 @@
       function spawnBalloons(){
         balloonLayer.innerHTML = "";
 
-        // place balloons left/right sides of the photo area, not covering the image
         const specs = [
-          { left: '6%',  dur: '4.6s', size: 34, emoji:'🎈' },
-          { left: '14%', dur: '5.2s', size: 30, emoji:'🎈' },
-          { left: '86%', dur: '4.9s', size: 34, emoji:'🎈' },
-          { left: '78%', dur: '5.6s', size: 30, emoji:'🎈' },
-          { left: '92%', dur: '5.1s', size: 28, emoji:'🎈' }
+          { left: '6%',  dur: 4.6, size: 34, emoji:'🎈' },
+          { left: '14%', dur: 5.2, size: 30, emoji:'🎈' },
+          { left: '86%', dur: 4.9, size: 34, emoji:'🎈' },
+          { left: '78%', dur: 5.6, size: 30, emoji:'🎈' },
+          { left: '92%', dur: 5.1, size: 28, emoji:'🎈' }
         ];
 
         for(const sp of specs){
@@ -655,14 +624,19 @@
           b.className = 'balloon';
           b.textContent = sp.emoji;
           b.style.left = sp.left;
-          b.style.setProperty('--dur', sp.dur);
+          b.style.setProperty('--dur', sp.dur + 's');
           b.style.fontSize = sp.size + 'px';
           balloonLayer.appendChild(b);
 
-          // stagger start
+          // Remove balloon from DOM when animation finishes
+          b.addEventListener('animationend', () => b.remove(), { once: true });
+
           const delay = 120 + Math.random()*420;
           setTimeout(() => b.classList.add('fly'), delay);
         }
+
+        // Safety cleanup in case anything remains
+        setTimeout(() => { balloonLayer.innerHTML = ""; }, 7000);
       }
 
       function doReveal(){
@@ -670,10 +644,8 @@
         banner.classList.add('show');
         smoothScrollToReveal();
 
-        // Stage 1: banner + sweep
         burstConfetti(110);
 
-        // Stage 2: photo in
         setTimeout(() => {
           photoFrame.classList.add('show');
           burstConfetti(170);
@@ -681,7 +653,6 @@
           spawnBalloons();
         }, 320);
 
-        // clean step visuals
         hideStepImages();
 
         mainBtn.disabled = true;
