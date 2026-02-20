@@ -244,7 +244,7 @@
       object-fit: cover;
     }
 
-    /* “Fantasmagoriko” glow */
+    /* “Fantasmagoriko” glow only (no overlay images) */
     .glowRing{
       position:absolute;
       inset:-10px;
@@ -261,28 +261,10 @@
       opacity: .9;
       animation: spin 2.8s linear infinite;
       pointer-events:none;
+      z-index: 0;
     }
     @keyframes spin{
       to{ transform: rotate(360deg); }
-    }
-
-    /* Side decoration: flowers only */
-    .finalFlowers{
-      position:absolute;
-      width: 170px;
-      max-width: 42%;
-      left: -14px;
-      bottom: -10px;
-      opacity: 0;
-      transform: translateY(10px) scale(.98);
-      filter: drop-shadow(0 18px 28px rgba(0,0,0,.16));
-      transition: opacity .45s ease, transform .45s ease;
-      pointer-events:none;
-      z-index: 4;
-    }
-    .finalFlowers.show{
-      opacity: 1;
-      transform: translateY(0) scale(1);
     }
 
     .note{
@@ -302,8 +284,7 @@
 
       <div class="content">
         <div class="topRow">
-          <!-- This stays constant, never changes -->
-          <p class="pill" id="status">Χρόνια πολλά Αφροδίτη</p>
+          <p class="pill">Χρόνια πολλά Αφροδίτη</p>
         </div>
 
         <div class="grid">
@@ -333,7 +314,6 @@
               </div>
 
               <div class="stepImageBox" id="imgStep2">
-                <!-- renamed to flowers.png -->
                 <img src="flowers.png" alt="Ανθοδέσμη"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
@@ -351,9 +331,6 @@
 
                 <div class="photoWrap">
                   <div class="glowRing" aria-hidden="true"></div>
-
-                  <!-- Only flowers as a side decoration (NOT corgi) -->
-                  <img class="finalFlowers" id="finalFlowers" src="flowers.png" alt="" />
 
                   <div class="photoFrame">
                     <img src="us.jpg" alt="Η φωτογραφία μας"
@@ -392,8 +369,6 @@
       const img2 = document.getElementById('imgStep2');
       const img3 = document.getElementById('imgStep3');
 
-      const finalFlowers = document.getElementById('finalFlowers');
-
       let step = 0; // 0..3 (3 = ready to reveal)
 
       function hideStepImages(){
@@ -425,10 +400,8 @@
         reveal.classList.add('show');
         hideStepImages();
 
-        setTimeout(() => finalFlowers.classList.add('show'), 140);
-
         // “Fantasmagoriko” confetti: burst + short shower
-        burstConfetti(240);
+        burstConfetti(260);
         startConfettiShower(1800);
 
         mainBtn.disabled = true;
@@ -470,7 +443,7 @@
           "rgba(57,198,165,0.95)",
           "rgba(255,181,71,0.95)",
           "rgba(111,81,255,0.75)",
-          "rgba(0,0,0,0.40)"
+          "rgba(0,0,0,0.35)"
         ];
         return palette[(Math.random()*palette.length)|0];
       }
