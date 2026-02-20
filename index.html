@@ -145,16 +145,6 @@
       transition: width .35s ease;
     }
 
-    .small{
-      font-size: 13px;
-      color: var(--muted);
-      margin:0;
-      display:flex;
-      justify-content:space-between;
-      gap:10px;
-      flex-wrap:wrap;
-    }
-
     .wishText{
       margin:0;
       font-size: 15px;
@@ -276,11 +266,13 @@
       to{ transform: rotate(360deg); }
     }
 
-    /* Side decorations around final photo */
-    .finalDeco{
+    /* Side decoration: flowers only */
+    .finalFlowers{
       position:absolute;
-      width: 160px;
-      max-width: 40%;
+      width: 170px;
+      max-width: 42%;
+      left: -14px;
+      bottom: -10px;
       opacity: 0;
       transform: translateY(10px) scale(.98);
       filter: drop-shadow(0 18px 28px rgba(0,0,0,.16));
@@ -288,12 +280,10 @@
       pointer-events:none;
       z-index: 4;
     }
-    .finalDeco.show{
+    .finalFlowers.show{
       opacity: 1;
       transform: translateY(0) scale(1);
     }
-    .finalDeco.left{ left: -10px; bottom: -6px; }
-    .finalDeco.right{ right: -10px; top: 22px; }
 
     .note{
       margin:0;
@@ -312,59 +302,47 @@
 
       <div class="content">
         <div class="topRow">
-          <p class="pill" id="status">Πάτα το κουμπί για να ξεκινήσουν οι ευχές</p>
+          <!-- This stays constant, never changes -->
+          <p class="pill" id="status">Χρόνια πολλά Αφροδίτη</p>
         </div>
 
         <div class="grid">
-          <!-- Left: the initial panda image -->
           <div class="box">
-            <!-- Save your panda birthday image as panda.png in the same folder -->
             <img class="heroImg" src="panda.png" alt="Birthday panda card"
                  onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
             <div class="inner" style="display:none;">
               <p class="wishText" style="color:var(--muted);">
-                Δεν βρέθηκε το <strong>panda.png</strong>. Βάλε την αρχική εικόνα (panda birthday) στο ίδιο folder και ονόμασέ την <strong>panda.png</strong>.
+                Δεν βρέθηκε το <strong>panda.png</strong>. Βάλε την αρχική εικόνα στο ίδιο folder και ονόμασέ την <strong>panda.png</strong>.
               </p>
             </div>
           </div>
 
-          <!-- Right: controls + step images + reveal -->
           <div class="box">
             <div class="inner">
               <button class="btn" id="mainBtn" type="button">Press για γενεθλιακές ευχές</button>
 
               <div class="progressWrap" id="progressWrap">
                 <div class="bar" aria-label="progress"><div id="barFill"></div></div>
-                <p class="small">
-                  <span id="stepLabel">0 / 3</span>
-                  <span id="stepHint">3 ευχές</span>
-                </p>
               </div>
 
-              <p class="wishText" id="wishText">
-                (Εδώ θα εμφανίζονται οι ευχές)
-              </p>
+              <p class="wishText" id="wishText"></p>
 
-              <!-- Step images (one per step) -->
               <div class="stepImageBox" id="imgStep1">
-                <!-- Save pizza candles image as pizza.png -->
                 <img src="pizza.png" alt="Pizza με κεράκια"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
               <div class="stepImageBox" id="imgStep2">
-                <!-- Save bouquet image as bouquet.png -->
-                <img src="bouquet.png" alt="Μπουκέτο λουλούδια"
+                <!-- renamed to flowers.png -->
+                <img src="flowers.png" alt="Ανθοδέσμη"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
               <div class="stepImageBox" id="imgStep3">
-                <!-- Save corgi image as corgi.png -->
                 <img src="corgi.png" alt="Corgi"
                      onerror="this.style.display='none'; this.parentElement.style.display='none';" />
               </div>
 
-              <!-- Final reveal -->
               <div class="reveal" id="reveal">
                 <div class="banner">
                   <div class="sparkle"></div>
@@ -374,18 +352,16 @@
                 <div class="photoWrap">
                   <div class="glowRing" aria-hidden="true"></div>
 
-                  <!-- Optional: reuse bouquet + corgi as side decorations -->
-                  <img class="finalDeco left" id="finalBouquet" src="bouquet.png" alt="" />
-                  <img class="finalDeco right" id="finalCorgi" src="corgi.png" alt="" />
+                  <!-- Only flowers as a side decoration (NOT corgi) -->
+                  <img class="finalFlowers" id="finalFlowers" src="flowers.png" alt="" />
 
                   <div class="photoFrame">
-                    <!-- Save your photo as us.jpg -->
                     <img src="us.jpg" alt="Η φωτογραφία μας"
                          onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend','<div style=&quot;padding:14px;color:#5b5b5b;font-size:14px;&quot;>Δεν βρέθηκε το <b>us.jpg</b>. Βάλε τη φωτογραφία σας στο ίδιο folder και ονόμασέ τη <b>us.jpg</b>.</div>');" />
                   </div>
                 </div>
 
-                <p class="note">Αλλάζεις μόνο τις 3 ευχές στο JavaScript, και τα αρχεία εικόνων (panda.png, pizza.png, bouquet.png, corgi.png, us.jpg).</p>
+                <p class="note">Αλλάζεις μόνο τις 3 ευχές στο JavaScript, και τα αρχεία εικόνων (panda.png, pizza.png, flowers.png, corgi.png, us.jpg).</p>
               </div>
             </div>
           </div>
@@ -405,12 +381,9 @@
       ];
       // ============================================
 
-      const status = document.getElementById('status');
       const mainBtn = document.getElementById('mainBtn');
-
       const progressWrap = document.getElementById('progressWrap');
       const barFill = document.getElementById('barFill');
-      const stepLabel = document.getElementById('stepLabel');
 
       const wishText = document.getElementById('wishText');
       const reveal = document.getElementById('reveal');
@@ -419,8 +392,7 @@
       const img2 = document.getElementById('imgStep2');
       const img3 = document.getElementById('imgStep3');
 
-      const finalBouquet = document.getElementById('finalBouquet');
-      const finalCorgi = document.getElementById('finalCorgi');
+      const finalFlowers = document.getElementById('finalFlowers');
 
       let step = 0; // 0..3 (3 = ready to reveal)
 
@@ -433,7 +405,6 @@
       function setProgress(s){
         const pct = Math.round((s / 3) * 100);
         barFill.style.width = pct + "%";
-        stepLabel.textContent = s + " / 3";
       }
 
       function showStep(s){
@@ -447,21 +418,17 @@
         if(s === 2) img2.classList.add('show');
         if(s === 3) img3.classList.add('show');
 
-        status.textContent = "Ευχές: βήμα " + s + " από 3";
         burstConfetti(70);
       }
 
       function doReveal(){
-        status.textContent = "Χρόνια πολλά, Αφροδίτη!";
         reveal.classList.add('show');
         hideStepImages();
 
-        // Show side decorations (if images exist)
-        setTimeout(() => finalBouquet.classList.add('show'), 120);
-        setTimeout(() => finalCorgi.classList.add('show'), 240);
+        setTimeout(() => finalFlowers.classList.add('show'), 140);
 
-        // Bigger “fantasmagoriko” confetti: burst + short shower
-        burstConfetti(220);
+        // “Fantasmagoriko” confetti: burst + short shower
+        burstConfetti(240);
         startConfettiShower(1800);
 
         mainBtn.disabled = true;
@@ -469,11 +436,6 @@
       }
 
       mainBtn.addEventListener('click', () => {
-        if(step === 0){
-          wishText.textContent = "";
-          status.textContent = "Ξεκινάμε τις ευχές";
-        }
-
         if(step < 3){
           step++;
           showStep(step);
@@ -508,7 +470,7 @@
           "rgba(57,198,165,0.95)",
           "rgba(255,181,71,0.95)",
           "rgba(111,81,255,0.75)",
-          "rgba(0,0,0,0.45)"
+          "rgba(0,0,0,0.40)"
         ];
         return palette[(Math.random()*palette.length)|0];
       }
@@ -576,9 +538,9 @@
         }
       }
 
-      // Initial text
-      setProgress(0);
+      // Initial state
       wishText.textContent = "";
+      barFill.style.width = "0%";
     })();
   </script>
 </body>
